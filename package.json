@@ -1,5 +1,5 @@
 {
-  "name": "nrsw",
+  "name": "KRSW-front",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {

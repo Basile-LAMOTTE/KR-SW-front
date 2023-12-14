@@ -1,4 +1,4 @@
-# nrsw
+# KRSW-front
 
 To install dependencies:
 
