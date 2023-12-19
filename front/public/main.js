@@ -22,6 +22,18 @@ helpLogo.y = 60;
 helpLogo.anchor.set(0.5);
 helpLogo.scale.set(0.08);
 
+// tooltip
+var roundedRect = new PIXI.Graphics();
+roundedRect.beginFill(0xf0f0f0);
+roundedRect.drawRoundedRect(
+  window.innerWidth - 600,
+  20,
+  500,
+  200,
+  20
+);
+roundedRect.endFill();
+
 // gradient
 const gradient = PIXI.Sprite.from('../ressources/gradient.png');
 gradient.width = window.innerWidth;
@@ -49,7 +61,7 @@ gradient.mask = flakes;
 // text base style
 const style = new PIXI.TextStyle({
   fontFamily: "Roboto Mono",
-  fontWeight: "bold",
+  fontWeight: 500,
   align: "center",
   fontSize: 60,
   fill: "white",
@@ -107,6 +119,7 @@ app.stage.addChild(flakes);
 app.stage.addChild(inputBackground);
 app.stage.addChild(cursor);
 app.stage.addChild(helpLogo);
+// app.stage.addChild(roundedRect);
 app.stage.addChild(userInput);
 app.stage.addChild(bottomPanel);
 app.stage.addChild(topPanel);
