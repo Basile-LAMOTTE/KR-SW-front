@@ -1,15 +1,21 @@
-# KRSW-front
+<p align="center"><img src="https://i.postimg.cc/Qxf65Mn6/KRSW-front-1.png" alt="TAG"></p>
 
-To install dependencies:
+![Alt Text](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Alt Text](https://img.shields.io/badge/Pixi.js-404D59?style=for-the-badge)
+![Alt Text](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
 
+Front end part of the KRSW project.
+
+## How to run
 ```bash
 bun install
+bun index.js
 ```
 
-To run:
+or
 
 ```bash
-bun run index.ts
+node install 
+node index.js
 ```
 
-This project was created using `bun init` in bun v1.0.0. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
