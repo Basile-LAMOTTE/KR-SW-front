@@ -1,3 +1,15 @@
+// Text base style
+const style = new PIXI.TextStyle({
+  // fontFamily: "Roboto Mono",
+  fontFamily: "SpaceMono",
+  // fontWeight: 500,
+  align: "center",
+  // wordWrap: true,
+  fontSize: 60,
+  fill: "white",
+});
+
+// Create the pixi app
 const app = new PIXI.Application({
   autoResize: true,
   resolution: window.devicePixelRatio,
@@ -8,6 +20,7 @@ const app = new PIXI.Application({
 
 document.body.appendChild(app.view);
 
+// Base variables
 let inputText = "";
 let ctrlMode = false;
 let shiftMode = false;
@@ -16,26 +29,15 @@ let shockWave = false;
 let repetitions = 0;
 let randomString = "";
 
-// text base style
-const style = new PIXI.TextStyle({
-  fontFamily: "Roboto Mono",
-  fontFamily: "SpaceMono",
-  // fontWeight: 500,
-  align: "center",
-  // wordWrap: true,
-  fontSize: 60,
-  fill: "white",
-});
-
-
-// gradient
+// Background gradient
 const gradient = PIXI.Sprite.from('../ressources/gradient.png');
 gradient.width = window.innerWidth;
 gradient.height = window.innerHeight;
 
-// flakes
-var flakes = new PIXI.Container();
+// Flake container
+const flakesContainer = new PIXI.Container();
 
+// Create flakes
 for (let i = 0; i < 200; i++) {
   const flake = new PIXI.Graphics();
   flake.beginFill(0x00FF00);
@@ -45,13 +47,14 @@ for (let i = 0; i < 200; i++) {
   flake.xspeed = 1 + Math.random();
   flake.yspeed = 2 + Math.random() * 2;
   flake.endFill();
-  flakes.addChild(flake);
+  flakesContainer.addChild(flake);
 }
 
-// by doing this the gradient is only visible through the flakes
-gradient.mask = flakes;
+// Gradient masking 
+// allow that the gradient background is only visible through the flakes
+gradient.mask = flakesContainer;
 
-// help logo
+// Help logo
 const helpLogo = PIXI.Sprite.from('../ressources/helplogo.png');
 helpLogo.x = window.innerWidth - 60;
 helpLogo.y = 60;
@@ -59,8 +62,7 @@ helpLogo.anchor.set(0.5);
 helpLogo.scale.set(0.08);
 helpLogo.interactive = true;
 
-
-// tooltip text
+// Tooltip
 const tooltip = PIXI.Sprite.from("../ressources/tooltip.jpg")
 tooltip.anchor.set(0.5)
 tooltip.scale.set(0.3);
@@ -68,21 +70,20 @@ tooltip.y = 130;
 tooltip.x = window.innerWidth - 350;
 tooltip.visible = false;
 
-helpLogo.on('mouseover', event => {
-  // tooltip.visible = true;
+helpLogo.on('mouseover', () => {
   showSprite(tooltip, 0.3);
 });
 
-helpLogo.on('mouseout', event => {
+helpLogo.on('mouseout', () => {
   reduceSprite(tooltip);
-  // tooltip.visible = false;
 });
 
-// random text for loading
-const loadingText = new PIXI.Text('    ', { ...style });
-loadingText.anchor.set(0.5);
-loadingText.x = window.innerWidth / 2;
-loadingText.y = window.innerHeight * 1.3;
+// Loading text
+const loadingText = new PIXI.Text('Searching throw SPARQL database...', { ...style, fontSize: 30 });
+loadingText.anchor.set(1, 0.5);
+loadingText.x = window.innerWidth * 0.9 - 40;
+loadingText.y = window.innerHeight * 0.9;
+loadingText.visible = false;
 
 // loading icon
 const textureArray = [];
@@ -93,16 +94,22 @@ for (let i = 0; i < 41; i++) {
 }
 
 const loadingIcon = new PIXI.AnimatedSprite(textureArray);
-loadingIcon.scale.set(0.8);
+loadingIcon.scale.set(0.2);
 loadingIcon.anchor.set(0.5);
 loadingIcon.animationSpeed = 0.5;
 loadingIcon.visible = false;
 
+// question searched by the user
+const questionText = new PIXI.Text('', { ...style, fontSize: 40 });
+questionText.anchor.set(0.5);
+questionText.x = window.innerWidth / 2;
+questionText.y = -window.innerHeight / 2;
+
 // query searched by the user
-const queryText = new PIXI.Text('', { ...style, fontFamily: 'Roboto', fontSize: 40 });
+const queryText = new PIXI.Text('', { ...style, align: 'left', fontSize: 40 });
 queryText.anchor.set(0.5);
 queryText.x = window.innerWidth / 2;
-queryText.y = 0;
+queryText.y = window.innerHeight * 1.5;
 
 // bottom and top cover that is displayed after the user press enter
 const bottomPanel = PIXI.Sprite.from(PIXI.Texture.WHITE);
@@ -119,10 +126,10 @@ topPanel.y = 0;
 topPanel.anchor.y = 1;
 
 
-// user input 
+// User input
 const userInput = new PIXI.Text('', { ...style });
 
-// input box that is behind the user input
+// Input background
 const inputBackground = PIXI.Sprite.from(PIXI.Texture.WHITE);
 inputBackground.tint = "#222222";
 inputBackground.anchor.set(0.5);
@@ -130,7 +137,7 @@ inputBackground.width = 600;
 inputBackground.height = 100;
 inputBackground.filters = [new PIXI.BlurFilter(60)];
 
-// cursor
+// Cursor
 const cursor = PIXI.Sprite.from(PIXI.Texture.WHITE);
 cursor.tint = "#FFFFFF";
 cursor.anchor.set(0.5);
@@ -138,26 +145,28 @@ cursor.width = 10;
 cursor.height = style.fontSize;
 
 
-// add sprites to stage
-app.stage.addChild(gradient);
-app.stage.addChild(flakes);
-app.stage.addChild(inputBackground);
-app.stage.addChild(cursor);
-app.stage.addChild(helpLogo);
-app.stage.addChild(tooltip);
-app.stage.addChild(userInput);
-app.stage.addChild(bottomPanel);
-app.stage.addChild(topPanel);
-// app.stage.addChild(loadingText);
-app.stage.addChild(queryText);
-app.stage.addChild(loadingIcon);
+// Add sprites to stage
+app.stage.addChild(
+  gradient,
+  flakesContainer,
+  inputBackground,
+  cursor,
+  helpLogo,
+  tooltip,
+  userInput,
+  bottomPanel,
+  topPanel,
+  questionText,
+  queryText,
+  loadingIcon,
+  loadingText
+);
 
-
-
-// shockwave effect dissplayed when the user press enter
+// Shockwave effect
 const shockwaveEffect = new PIXI.filters.ShockwaveFilter([window.innerWidth / 2, window.innerHeight / 2]);
 shockwaveEffect.radius = -1;
 shockwaveEffect.time = -1;
+shockwaveEffect.speed = 250;
 shockwaveEffect.brightness = 1;
 shockwaveEffect.amplitude = 80;
 shockwaveEffect.wavelength = 500;
@@ -166,10 +175,11 @@ userInput.filters = [shockwaveEffect];
 gradient.filters = [shockwaveEffect];
 
 // WIP
+// reflection effect on the whole page
+// look sick but distracting
 const reflectionFilter = new PIXI.filters.ReflectionFilter();
 reflectionFilter.boundary = 0.6;
 reflectionFilter.alpha = [1, 0];
-
 // app.stage.filters = [reflectionFilter];
 
 
@@ -183,22 +193,23 @@ function resize() {
   cursor.y = window.innerHeight / 2 - 10;
   userInput.x = window.innerWidth / 2;
   userInput.y = window.innerHeight / 2 - inputBackground.height / 2 + 10;
-  loadingText.x = window.innerWidth / 2;
-  loadingText.y = window.innerHeight * 1.3;
-  loadingIcon.x = window.innerWidth / 2;
-  loadingIcon.y = window.innerHeight / 2;
+  loadingText.x = window.innerWidth - 175;
+  loadingText.y = window.innerHeight - 60;
+  loadingIcon.x = window.innerWidth - 100;
+  loadingIcon.y = window.innerHeight - 75;
   // loadingIcon.y = window.innerHeight * 1.3;
-  flakes.children.forEach(flake => {
+  flakesContainer.children.forEach(flake => {
     flake.x = Math.random() * window.innerWidth * 2 - window.innerWidth;
     flake.y = Math.random() * window.innerHeight;
   })
+  questionText.x = window.innerWidth / 2;
   queryText.x = window.innerWidth / 2;
   tooltip.x = window.innerWidth - 350;
   helpLogo.x = window.innerWidth - 60;
   bottomPanel.width = window.innerWidth;
   bottomPanel.height = window.innerHeight;
   userInput.style.wordWrapWidth = window.innerWidth * 0.9;
-  queryText.style.wordWrapWidth = window.innerWidth * 0.9;
+  questionText.style.wordWrapWidth = window.innerWidth * 0.9;
 }
 resize();
 // will run at every resize of the window, so all sprites remain centered no matter what
@@ -230,7 +241,6 @@ function showSprite(sprite, scale) {
     sprite.scale.x *= 1.1;
     sprite.scale.y *= 1.1;
     if (sprite.scale.x >= scale) {
-      console.log('byyyy');
       sprite.scale.set(scale);
       ticker.remove(onTick);
     }
@@ -257,20 +267,21 @@ function reduceSprite(sprite) {
 function togglePanels() {
   const ticker = PIXI.Ticker.shared;
   const target = window.innerHeight;
-  queryText.text = inputText;
+  questionText.text = inputText;
 
   const onTick = (deltaTime) => {
     // resultPanel.y += 0.5;
-    bottomPanel.y += (0 - bottomPanel.y) * 0.01;
-    topPanel.y += (target - topPanel.y) * 0.01;
-    loadingText.y += (window.innerHeight / 2 - loadingText.y) * 0.01;
+    bottomPanel.y += (0 - bottomPanel.y) * 0.02;
+    topPanel.y += (target - topPanel.y) * 0.02;
     // loadingIcon.y += (window.innerHeight / 2 - loadingIcon.y) * 0.01;
-    queryText.y += (window.innerHeight * 0.1 - queryText.y) * 0.03;
-    if (topPanel.y > window.innerHeight / 2) {
+    questionText.y += (window.innerHeight * 0.1 - questionText.y) * 0.04;
+    queryText.y += (window.innerHeight / 2 - queryText.y) * 0.02;
+    if (queryText.y < window.innerHeight / 2 + 50) {
       ticker.remove(onTick);
       loadingIcon.currentFrame = 28;
       loadingIcon.play();
-      showSprite(loadingIcon, 0.7);
+      showSprite(loadingIcon, 0.5);
+      showSprite(loadingText, 1);
     }
   }
 
@@ -279,6 +290,30 @@ function togglePanels() {
 
 String.prototype.replaceAt = function(index, replacement) {
   return this.substring(0, index) + replacement + this.substring(index + replacement.length);
+}
+
+function askQuestion(question) {
+  fetch('/ask', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ question: question }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the response data
+      console.log(data);
+      queryText.text = data.resp;
+      queryText.y = window.innerHeight + queryText.height;
+      togglePanels();
+      console.log(data.resp);
+      // console.log(`response from serv ${data}`);
+    })
+    .catch(error => {
+      // Handle errors
+      console.error('Error:', error);
+    });
 }
 
 window.addEventListener('keydown', function(event) {
@@ -304,9 +339,9 @@ window.addEventListener('keydown', function(event) {
   if (key === "Enter") {
     if (inputText.length === 0) inputText = userInput.text;
     reduceSprite(userInput);
+    askQuestion(inputText);
     // fadeIn(searchingText, 3000)
     inputBackground.visible = false;
-    setTimeout(() => togglePanels(), 1000)
     cursor.visible = false;
     shockWave = true;
     shockwaveEffect.time = 0;
@@ -358,6 +393,7 @@ const listOfQuestions = [
   "What is the largest ocean on Earth?",
   "When was the World Wide Web invented?",
 ];
+
 function changeToRandomQuestion() {
   var question = repetitions < 2 ? listOfQuestions[Math.floor(Math.random() * listOfQuestions.length)] : "What are you looking for?"
   let iterations = 0;
@@ -392,19 +428,19 @@ app.ticker.add((delta) => {
   // if (inputText.slice(-1) === ' ') cursor.x += style.fontSize / 2;
   if (userInput.width + 100 > inputBackground.width) inputBackground.width = userInput.width + 100;
   else if (inputBackground.width > 600 && userInput.width + 100 < inputBackground.width) inputBackground.width -= 50;
-  flakes.children.forEach(flake => {
+  flakesContainer.children.forEach(flake => {
     updateFlake(flake);
   });
-  if (shockwaveEffect.time > 2.5) {
+  if (shockwaveEffect.time > 5) {
     shockWave = false;
     shockwaveEffect.time = -1;
   }
   if (shockWave)
     shockwaveEffect.time += 0.03;
-  loadingText.text = loadingText.text.split("")
-    .map((letter, index) => {
-      return listOfSymbols[Math.floor(Math.random() * listOfSymbols.length)]
-    }).join("")
+  // loadingText.text = loadingText.text.split("")
+  //   .map((letter, index) => {
+  //     return listOfSymbols[Math.floor(Math.random() * listOfSymbols.length)]
+  //   }).join("")
   // console.log(`'${userInput.text}'`);
 });
 
