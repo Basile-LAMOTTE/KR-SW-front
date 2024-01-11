@@ -28,6 +28,7 @@ let userIsWriting = false;
 let shockWave = false;
 let repetitions = 0;
 let randomString = "";
+let anwserScreen = false;
 
 // Background gradient
 const gradient = PIXI.Sprite.from('../ressources/gradient.png');
@@ -110,6 +111,7 @@ const queryText = new PIXI.Text('', { ...style, align: 'left', fontSize: 40 });
 queryText.anchor.set(0.5);
 queryText.x = window.innerWidth / 2;
 queryText.y = window.innerHeight * 1.5;
+
 
 // bottom and top cover that is displayed after the user press enter
 const bottomPanel = PIXI.Sprite.from(PIXI.Texture.WHITE);
@@ -264,7 +266,7 @@ function reduceSprite(sprite) {
   ticker.add(onTick);
 }
 
-function togglePanels() {
+function closePanels() {
   const ticker = PIXI.Ticker.shared;
   const target = window.innerHeight;
   questionText.text = inputText;
@@ -282,6 +284,32 @@ function togglePanels() {
       loadingIcon.play();
       showSprite(loadingIcon, 0.5);
       showSprite(loadingText, 1);
+    }
+  }
+
+  ticker.add(onTick);
+}
+
+function openPanels(text) {
+  const ticker = PIXI.Ticker.shared;
+  const target = -window.innerHeight;
+  console.log(text);
+  userInput.text = text;
+  reduceSprite(loadingIcon);
+  reduceSprite(loadingText);
+  showSprite(userInput, 1);
+  anwserScreen = true;
+
+
+  const onTick = (deltaTime) => {
+    bottomPanel.y += (window.innerHeight * 2 - bottomPanel.y) * 0.02;
+    topPanel.y += (target - topPanel.y) * 0.02;
+    questionText.y += (-200 - questionText.y) * 0.04;
+    queryText.y += (window.innerHeight * 2 - queryText.y) * 0.02;
+
+    if (topPanel.y < 0) {
+      ticker.remove(onTick);
+      console.log(userInput);
     }
   }
 
@@ -306,9 +334,37 @@ function askQuestion(question) {
       console.log(data);
       queryText.text = data.resp;
       queryText.y = window.innerHeight + queryText.height;
-      togglePanels();
+      closePanels();
+      getResultFromDBpedia(data.resp);
       console.log(data.resp);
       // console.log(`response from serv ${data}`);
+    })
+    .catch(error => {
+      // Handle errors
+      console.error('Error:', error);
+    });
+}
+
+function getResultFromDBpedia(query) {
+  fetch('/dbpedia', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query: query }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the response data
+      console.log(data.resp);
+      let text = data.resp.split('\n');
+      if (text.length === 1)
+        text = "Sorry, dbpedia did not provide\na clear anwser to the query."
+      else {
+        text.shift();
+        text = text.join('. ');
+      }
+      setTimeout(() => openPanels(text), 4000);
     })
     .catch(error => {
       // Handle errors
@@ -392,6 +448,7 @@ const listOfQuestions = [
   "Who developed the theory of relativity?",
   "What is the largest ocean on Earth?",
   "When was the World Wide Web invented?",
+  "Who is the oldest human ?"
 ];
 
 function changeToRandomQuestion() {
@@ -422,7 +479,8 @@ function changeToRandomQuestion() {
 changeToRandomQuestion();
 
 app.ticker.add((delta) => {
-  userInput.text = inputText.length > 0 ? inputText : randomString;
+  if (!anwserScreen)
+    userInput.text = inputText.length > 0 ? inputText : randomString;
   userInput.x = window.innerWidth / 2 - userInput.width / 2;
   cursor.x = window.innerWidth / 2 + userInput.width / 2 + 10;
   // if (inputText.slice(-1) === ' ') cursor.x += style.fontSize / 2;
