@@ -29,7 +29,7 @@ async function askQuestion(question) {
       role: 'user',
       content: `Your job is to translate natural languge to a dbpedia SPARQL query given a user’s request. Use prefixes. You must anwser only with the query. Here is the first question: ${question}`
     }],
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-4',
   });
   return chatCompletion.choices[0].message.content;
   return `SELECT ?birthPlace\nWHERE {\n  dbr:Cristiano_Ronaldo dbo:birthPlace ?birthPlace\n}`

@@ -434,21 +434,14 @@ function updateFlake(flake) {
 const listOfLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 const listOfQuestions = [
   "What is the capital of Brazil?",
-  "What is the largest mammal on Earth?",
-  "When was Linus Torvalds born?",
-  "Who wrote 'Romeo and Juliet'?",
-  "Who is the current president of France?",
-  "When did the Industrial Revolution begin?",
-  "What is the capital of Japan?",
-  "Who painted the Mona Lisa?",
-  "What is the currency of Australia?",
-  "When was the Declaration of Independence signed?",
-  "Who is the author of 'To Kill a Mockingbird'?",
-  "What is the boiling point of water in Fahrenheit?",
-  "Who developed the theory of relativity?",
-  "What is the largest ocean on Earth?",
-  "When was the World Wide Web invented?",
-  "Who is the oldest human ?"
+  "What is the age of messi ?",
+  "What is the currency of Chile ?",
+  "What is the height of ronaldo ?",
+  "Who painted the mona lisa ?",
+  "What is the release date of League of Legends ?",
+  "Who made linux ?",
+  "Where is the Eiffel Tower ?",
+  "Where is the Statue of Liberty ?"
 ];
 
 function changeToRandomQuestion() {
