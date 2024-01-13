@@ -1,21 +1,16 @@
-<p align="center"><img src="https://i.postimg.cc/Qxf65Mn6/KRSW-front-1.png" alt="TAG"></p>
+<p align="center"><img src="https://i.postimg.cc/15vvLXqD/KRSW.png" alt="TAG"></p>
 
 ![Alt Text](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![Alt Text](https://img.shields.io/badge/Pixi.js-404D59?style=for-the-badge)
 ![Alt Text](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
 
-Front end part of the KRSW project.
+Translate natural language questions to dbdia query and call the dbpedia api with this query.
+
+## Why ?
+It's a `knowledge representation and semantic web` course project we made in Sweden.
 
 ## How to run
 ```bash
-bun install
-bun index.js
-```
-
-or
-
-```bash
-node install 
+npm install
 node index.js
 ```
-
