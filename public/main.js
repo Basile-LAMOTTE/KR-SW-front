@@ -12,10 +12,9 @@ const style = new PIXI.TextStyle({
 // Create the pixi app
 const app = new PIXI.Application({
   autoResize: true,
-  resolution: window.devicePixelRatio,
   // resolution: devicePixelRatio,
   backgroundAlpha: 1,
-  backgroundColor: 0x222222
+  backgroundColor: 0x222222,
 });
 
 document.body.appendChild(app.view);
@@ -31,9 +30,12 @@ let randomString = "";
 let anwserScreen = false;
 
 // Background gradient
-const gradient = PIXI.Sprite.from('../ressources/gradient.png');
+const gradient = PIXI.Sprite.from("../ressources/gradient.png");
 gradient.width = window.innerWidth;
 gradient.height = window.innerHeight;
+
+// Texts Container
+const textsContainer = new PIXI.Container();
 
 // Flake container
 const flakesContainer = new PIXI.Container();
@@ -41,7 +43,7 @@ const flakesContainer = new PIXI.Container();
 // Create flakes
 for (let i = 0; i < 200; i++) {
   const flake = new PIXI.Graphics();
-  flake.beginFill(0x00FF00);
+  flake.beginFill(0x00ff00);
   flake.drawCircle(0, 0, 2 + Math.random() * 3);
   flake.x = Math.random() * window.innerWidth * 2 - window.innerWidth;
   flake.y = Math.random() * window.innerHeight;
@@ -51,12 +53,12 @@ for (let i = 0; i < 200; i++) {
   flakesContainer.addChild(flake);
 }
 
-// Gradient masking 
+// Gradient masking
 // allow that the gradient background is only visible through the flakes
 gradient.mask = flakesContainer;
 
 // Help logo
-const helpLogo = PIXI.Sprite.from('../ressources/helplogo.png');
+const helpLogo = PIXI.Sprite.from("../ressources/helplogo.png");
 helpLogo.x = window.innerWidth - 60;
 helpLogo.y = 60;
 helpLogo.anchor.set(0.5);
@@ -64,23 +66,26 @@ helpLogo.scale.set(0.08);
 helpLogo.interactive = true;
 
 // Tooltip
-const tooltip = PIXI.Sprite.from("../ressources/tooltip.jpg")
-tooltip.anchor.set(0.5)
+const tooltip = PIXI.Sprite.from("../ressources/tooltip.jpg");
+tooltip.anchor.set(0.5);
 tooltip.scale.set(0.3);
 tooltip.y = 130;
 tooltip.x = window.innerWidth - 350;
 tooltip.visible = false;
 
-helpLogo.on('mouseover', () => {
+helpLogo.on("mouseover", () => {
   showSprite(tooltip, 0.3);
 });
 
-helpLogo.on('mouseout', () => {
+helpLogo.on("mouseout", () => {
   reduceSprite(tooltip);
 });
 
 // Loading text
-const loadingText = new PIXI.Text('Searching throw SPARQL database...', { ...style, fontSize: 30 });
+const loadingText = new PIXI.Text("Searching throw SPARQL database...", {
+  ...style,
+  fontSize: 30,
+});
 loadingText.anchor.set(1, 0.5);
 loadingText.x = window.innerWidth * 0.9 - 40;
 loadingText.y = window.innerHeight * 0.9;
@@ -101,17 +106,16 @@ loadingIcon.animationSpeed = 0.5;
 loadingIcon.visible = false;
 
 // question searched by the user
-const questionText = new PIXI.Text('', { ...style, fontSize: 40 });
+const questionText = new PIXI.Text("", { ...style, fontSize: 40 });
 questionText.anchor.set(0.5);
 questionText.x = window.innerWidth / 2;
 questionText.y = -window.innerHeight / 2;
 
 // query searched by the user
-const queryText = new PIXI.Text('', { ...style, align: 'left', fontSize: 40 });
+const queryText = new PIXI.Text("", { ...style, align: "left", fontSize: 40 });
 queryText.anchor.set(0.5);
 queryText.x = window.innerWidth / 2;
 queryText.y = window.innerHeight * 1.5;
-
 
 // bottom and top cover that is displayed after the user press enter
 const bottomPanel = PIXI.Sprite.from(PIXI.Texture.WHITE);
@@ -127,9 +131,9 @@ topPanel.height = window.innerHeight;
 topPanel.y = 0;
 topPanel.anchor.y = 1;
 
-
 // User input
-const userInput = new PIXI.Text('', { ...style });
+const userInput = new PIXI.Text("", { ...style });
+userInput.anchor.set(0, 0.5);
 
 // Input background
 const inputBackground = PIXI.Sprite.from(PIXI.Texture.WHITE);
@@ -137,6 +141,9 @@ inputBackground.tint = "#222222";
 inputBackground.anchor.set(0.5);
 inputBackground.width = 600;
 inputBackground.height = 100;
+const blurFilter = new PIXI.BlurFilter();
+blurFilter.quality = 10;
+blurFilter.blendMode = PIXI.BLEND_MODES.MULTIPLY;
 inputBackground.filters = [new PIXI.BlurFilter(60)];
 
 // Cursor
@@ -145,7 +152,6 @@ cursor.tint = "#FFFFFF";
 cursor.anchor.set(0.5);
 cursor.width = 10;
 cursor.height = style.fontSize;
-
 
 // Add sprites to stage
 app.stage.addChild(
@@ -161,11 +167,17 @@ app.stage.addChild(
   questionText,
   queryText,
   loadingIcon,
-  loadingText
+  loadingText,
 );
 
+textsContainer.addChild(userInput, queryText, questionText);
+app.stage.addChild(textsContainer);
+
 // Shockwave effect
-const shockwaveEffect = new PIXI.filters.ShockwaveFilter([window.innerWidth / 2, window.innerHeight / 2]);
+const shockwaveEffect = new PIXI.filters.ShockwaveFilter([
+  window.innerWidth / 2,
+  window.innerHeight / 2,
+]);
 shockwaveEffect.radius = -1;
 shockwaveEffect.time = -1;
 shockwaveEffect.speed = 250;
@@ -184,7 +196,6 @@ reflectionFilter.boundary = 0.6;
 reflectionFilter.alpha = [1, 0];
 // app.stage.filters = [reflectionFilter];
 
-
 function resize() {
   app.renderer.resize(window.innerWidth, window.innerHeight);
   gradient.width = window.innerWidth;
@@ -194,16 +205,16 @@ function resize() {
   cursor.x = window.innerWidth / 2;
   cursor.y = window.innerHeight / 2 - 10;
   userInput.x = window.innerWidth / 2;
-  userInput.y = window.innerHeight / 2 - inputBackground.height / 2 + 10;
+  userInput.y = window.innerHeight / 2 + 10;
   loadingText.x = window.innerWidth - 175;
   loadingText.y = window.innerHeight - 60;
   loadingIcon.x = window.innerWidth - 100;
   loadingIcon.y = window.innerHeight - 75;
   // loadingIcon.y = window.innerHeight * 1.3;
-  flakesContainer.children.forEach(flake => {
+  flakesContainer.children.forEach((flake) => {
     flake.x = Math.random() * window.innerWidth * 2 - window.innerWidth;
     flake.y = Math.random() * window.innerHeight;
-  })
+  });
   questionText.x = window.innerWidth / 2;
   queryText.x = window.innerWidth / 2;
   tooltip.x = window.innerWidth - 350;
@@ -215,21 +226,22 @@ function resize() {
 }
 resize();
 // will run at every resize of the window, so all sprites remain centered no matter what
-window.addEventListener('resize', resize);
+window.addEventListener("resize", resize);
 
 // manage ctrl shorcuts
 function shortcutManager(key) {
   if (key === "Backspace") {
     if (inputText.slice(-1) === " ") inputText = inputText.slice(0, -1);
-    inputText = inputText.slice(0, inputText.lastIndexOf(" ") + 2)
+    inputText = inputText.slice(0, inputText.lastIndexOf(" ") + 2);
   }
   if (key === "v") {
-    navigator.clipboard.readText()
-      .then(text => {
+    navigator.clipboard
+      .readText()
+      .then((text) => {
         inputText += text;
       })
-      .catch(err => {
-        console.error('Failed to read clipboard contents: ', err);
+      .catch((err) => {
+        console.error("Failed to read clipboard contents: ", err);
       });
   }
 }
@@ -246,7 +258,7 @@ function showSprite(sprite, scale) {
       sprite.scale.set(scale);
       ticker.remove(onTick);
     }
-  }
+  };
 
   ticker.add(onTick);
 }
@@ -261,7 +273,7 @@ function reduceSprite(sprite) {
       sprite.visible = false;
       ticker.remove(onTick);
     }
-  }
+  };
 
   ticker.add(onTick);
 }
@@ -285,7 +297,7 @@ function closePanels() {
       showSprite(loadingIcon, 0.5);
       showSprite(loadingText, 1);
     }
-  }
+  };
 
   ticker.add(onTick);
 }
@@ -300,7 +312,6 @@ function openPanels(text) {
   showSprite(userInput, 1);
   anwserScreen = true;
 
-
   const onTick = (deltaTime) => {
     bottomPanel.y += (window.innerHeight * 2 - bottomPanel.y) * 0.02;
     topPanel.y += (target - topPanel.y) * 0.02;
@@ -311,71 +322,76 @@ function openPanels(text) {
       ticker.remove(onTick);
       console.log(userInput);
     }
-  }
+  };
 
   ticker.add(onTick);
 }
 
-String.prototype.replaceAt = function(index, replacement) {
-  return this.substring(0, index) + replacement + this.substring(index + replacement.length);
-}
+String.prototype.replaceAt = function (index, replacement) {
+  return (
+    this.substring(0, index) +
+    replacement +
+    this.substring(index + replacement.length)
+  );
+};
 
 function askQuestion(question) {
-  fetch('/ask', {
-    method: 'POST',
+  fetch("/ask", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ question: question }),
   })
-    .then(response => response.json())
-    .then(data => {
+    .then((response) => response.json())
+    .then((data) => {
       // Handle the response data
       console.log(data);
       queryText.text = data.resp;
       queryText.y = window.innerHeight + queryText.height;
+      while (queryText.width >= window.innerWidth * 0.9) queryText.font--;
       closePanels();
       getResultFromDBpedia(data.resp);
       console.log(data.resp);
       // console.log(`response from serv ${data}`);
     })
-    .catch(error => {
+    .catch((error) => {
       // Handle errors
-      console.error('Error:', error);
+      console.error("Error:", error);
     });
 }
 
 function getResultFromDBpedia(query) {
-  fetch('/dbpedia', {
-    method: 'POST',
+  fetch("/dbpedia", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ query: query }),
   })
-    .then(response => response.json())
-    .then(data => {
+    .then((response) => response.json())
+    .then((data) => {
       // Handle the response data
       console.log(data.resp);
-      let text = data.resp.split('\n');
+      let text = data.resp.split("\n");
       if (text.length === 1)
-        text = "Sorry, dbpedia did not provide\na clear anwser to the query."
+        text = "Sorry, dbpedia did not provide\na clear anwser to the query.";
       else {
         text.shift();
-        text = text.join('. ');
+        text = text.join(". ");
       }
       setTimeout(() => openPanels(text), 4000);
     })
-    .catch(error => {
+    .catch((error) => {
       // Handle errors
-      console.error('Error:', error);
+      console.error("Error:", error);
     });
 }
 
-window.addEventListener('keydown', function(event) {
+window.addEventListener("keydown", function (event) {
   userIsWriting = true;
   repetitions = 2;
-  setTimeout(() => userIsWriting = false, 1500);
+  setTimeout(() => (userIsWriting = false), 1500);
   const key = event.key;
   if (ctrlMode) {
     shortcutManager(key);
@@ -401,21 +417,21 @@ window.addEventListener('keydown', function(event) {
     cursor.visible = false;
     shockWave = true;
     shockwaveEffect.time = 0;
-    console.log(`user input: '${inputText}'`)
+    console.log(`user input: '${inputText}'`);
   }
   if (ctrlMode) return; // don't type if ctrl key is held
   if (key.length > 1) return; // only add alpha alpha keys to input text
   inputText += shiftMode ? key.toUpperCase() : key;
 });
 
-window.addEventListener('keyup', function(event) {
+window.addEventListener("keyup", function (event) {
   const key = event.key;
   if (key === "Control") ctrlMode = false;
   if (key === "Shift") shiftMode = false;
   if (key === "Escape") userInput.tint = "#FFFFFF";
 });
 
-var cursorBlink = window.setInterval(function() {
+var cursorBlink = window.setInterval(function () {
   cursor.alpha = cursor.alpha === 1 ? 0 : 1;
   if (userIsWriting) cursor.alpha = 1; // keep cursor visible if user is writing
 }, 600);
@@ -431,7 +447,7 @@ function updateFlake(flake) {
   flake.x += flake.xspeed;
 }
 
-const listOfLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+const listOfLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const listOfQuestions = [
   "What is the capital of Brazil?",
   "What is the age of messi ?",
@@ -441,11 +457,14 @@ const listOfQuestions = [
   "What is the release date of League of Legends ?",
   "Who made linux ?",
   "Where is the Eiffel Tower ?",
-  "Where is the Statue of Liberty ?"
+  "Where is the Statue of Liberty ?",
 ];
 
 function changeToRandomQuestion() {
-  var question = repetitions < 2 ? listOfQuestions[Math.floor(Math.random() * listOfQuestions.length)] : "What are you looking for?"
+  var question =
+    repetitions < 2
+      ? listOfQuestions[Math.floor(Math.random() * listOfQuestions.length)]
+      : "What are you looking for?";
   let iterations = 0;
 
   const interval = setInterval(() => {
@@ -456,16 +475,16 @@ function changeToRandomQuestion() {
           return question[index];
         }
 
-        return listOfLetters[Math.floor(Math.random() * 26 * 2)]
-      }).join("")
+        return listOfLetters[Math.floor(Math.random() * 26 * 2)];
+      })
+      .join("");
     if (iterations >= question.length) {
       clearInterval(interval);
-      if (repetitions < 2)
-        setTimeout(() => changeToRandomQuestion(), 1000)
+      if (repetitions < 2) setTimeout(() => changeToRandomQuestion(), 1000);
       repetitions++;
     }
     iterations++;
-  }, 30)
+  }, 30);
   return randomString;
 }
 
@@ -475,24 +494,34 @@ app.ticker.add((delta) => {
   if (!anwserScreen)
     userInput.text = inputText.length > 0 ? inputText : randomString;
   userInput.x = window.innerWidth / 2 - userInput.width / 2;
+  // if text don't fit in the window reduce the fontsize of the text
+  textsContainer.children.forEach((text) => {
+    while (text.width >= window.innerWidth * 0.9) {
+      text.style.fontSize--;
+    }
+  });
   cursor.x = window.innerWidth / 2 + userInput.width / 2 + 10;
+  cursor.height = userInput.style.fontSize;
+  userInput.y = window.innerHeight / 2;
   // if (inputText.slice(-1) === ' ') cursor.x += style.fontSize / 2;
-  if (userInput.width + 100 > inputBackground.width) inputBackground.width = userInput.width + 100;
-  else if (inputBackground.width > 600 && userInput.width + 100 < inputBackground.width) inputBackground.width -= 50;
-  flakesContainer.children.forEach(flake => {
+  if (userInput.width + 100 > inputBackground.width)
+    inputBackground.width = userInput.width + 100;
+  else if (
+    inputBackground.width > 600 &&
+    userInput.width + 100 < inputBackground.width
+  )
+    inputBackground.width -= 50;
+  flakesContainer.children.forEach((flake) => {
     updateFlake(flake);
   });
   if (shockwaveEffect.time > 5) {
     shockWave = false;
     shockwaveEffect.time = -1;
   }
-  if (shockWave)
-    shockwaveEffect.time += 0.03;
+  if (shockWave) shockwaveEffect.time += 0.03;
   // loadingText.text = loadingText.text.split("")
   //   .map((letter, index) => {
   //     return listOfSymbols[Math.floor(Math.random() * listOfSymbols.length)]
   //   }).join("")
   // console.log(`'${userInput.text}'`);
 });
-
-

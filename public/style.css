@@ -1,24 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap");
 
 * {
   font-variant-ligatures: none;
 }
 
 @font-face {
-    font-family: "SpaceMono";
-    src: url("../ressources/font/SpaceMono-Bold.ttf");
+  font-family: "SpaceMono";
+  src: url("../ressources/font/SpaceMono-Bold.ttf");
 }
 
 body {
-  zoom: 0.5;
-  -moz-transform: scale(0.5);
-  -moz-transform-origin: 0 0;
-  margin:0;
-  padding:0;
-  overflow:hidden;
+  /* zoom: 0.5; */
+  /* -moz-transform: scale(0.9); */
+  /* -moz-transform-origin: 0 0; */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 canvas {
-  display:block;
+  display: block;
 }
